@@ -1,1 +1,104 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестування</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        #answers button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #answers button:hover {
+            background-color: #0056b3;
+        }
+        #next {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #next:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Проходження тесту</h1>
+        <div id="quiz-container">
+            <p id="question"></p>
+            <div id="answers"></div>
+            <button id="next" disabled>Наступне питання</button>
+        </div>
+    </div>
+    <script>
+        let currentQuestionIndex = 0;
+        let questions = [];
 
+        fetch('tests.json')
+            .then(response => response.json())
+            .then(data => {
+                questions = data;
+                showQuestion();
+            });
+
+        function showQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            document.getElementById('question').innerText = questionData.question;
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+
+            questionData.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.onclick = () => selectAnswer(button, answer.correct);
+                answersDiv.appendChild(button);
+            });
+        }
+
+        function selectAnswer(button, isCorrect) {
+            document.querySelectorAll('#answers button').forEach(btn => btn.disabled = true);
+            button.style.backgroundColor = isCorrect ? 'green' : 'red';
+            document.getElementById('next').disabled = false;
+        }
+
+        document.getElementById('next').addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+                document.getElementById('next').disabled = true;
+            } else {
+                document.getElementById('quiz-container').innerHTML = '<h2>Тест завершено!</h2>';
+            }
+        });
+    </script>
+</body>
+</html>
