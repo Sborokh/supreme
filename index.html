@@ -152,15 +152,22 @@
     <script>
         let currentQuestionIndex = 0;
         let questions = [];
+        let correctAnswersCount = 0;
 
-        fetch('tests.json')
-            .then(response => response.json())
-            .then(data => {
-                questions = data;
-                showQuestion();
-                generateNavigation();
-            });
+        // Функція для завантаження тесту
+        function loadQuiz() {
+            fetch('tests.json')
+                .then(response => response.json())
+                .then(data => {
+                    questions = data;
+                    correctAnswersCount = 0;  // Скидаємо кількість правильних відповідей
+                    currentQuestionIndex = 0; // Скидаємо індекс поточного питання
+                    showQuestion();
+                    generateNavigation();
+                });
+        }
 
+        // Показуємо поточне питання
         function showQuestion() {
             const questionData = questions[currentQuestionIndex];
             document.getElementById('question').innerText = questionData.question;
@@ -184,11 +191,13 @@
             updateNavigation();
         }
 
+        // Обробка вибору відповіді
         function selectAnswer(button, isCorrect, allAnswers) {
             document.querySelectorAll('#answers button').forEach(btn => btn.disabled = true);
 
             if (isCorrect) {
                 button.style.backgroundColor = 'green';
+                correctAnswersCount++;
             } else {
                 button.style.backgroundColor = 'red';
             }
@@ -205,6 +214,7 @@
             document.getElementById('next').disabled = false;
         }
 
+        // Оновлення кнопки навігації
         function updateNavigationButton(isCorrect) {
             const navButtons = document.querySelectorAll('.nav-button');
             const currentButton = navButtons[currentQuestionIndex];
@@ -212,6 +222,7 @@
             currentButton.classList.add(isCorrect ? 'correct' : 'incorrect');
         }
 
+        // Генерація кнопок для навігації
         function generateNavigation() {
             const navDiv = document.getElementById('quiz-nav');
             navDiv.innerHTML = '';
@@ -225,6 +236,7 @@
             });
         }
 
+        // Оновлення стану кнопок навігації
         function updateNavigation() {
             const navButtons = document.querySelectorAll('.nav-button');
             navButtons.forEach((button, index) => {
@@ -240,26 +252,44 @@
             });
         }
 
+        // Перехід до питання
         function goToQuestion(index) {
             currentQuestionIndex = index;
             showQuestion();
         }
 
+        // Перехід до наступного питання
         document.getElementById('next').addEventListener('click', () => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 showQuestion();
             } else {
-                document.getElementById('quiz-container').innerHTML = '<h2>Тест завершено!</h2>';
+                const percentage = (correctAnswersCount / questions.length) * 100;
+                document.getElementById('quiz-container').innerHTML = `
+                    <h2>Тест завершено!</h2>
+                    <p>Вірно відповіли на ${correctAnswersCount} з ${questions.length} питань.</p>
+                    <p>Ваш відсоток правильних відповідей: ${percentage.toFixed(2)}%</p>
+                    <button id="restart" class="btn btn-primary">Розпочати знову</button>
+                `;
+                document.getElementById('restart').addEventListener('click', restartQuiz);
             }
         });
 
+        // Перехід до попереднього питання
         document.getElementById('prev').addEventListener('click', () => {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
                 showQuestion();
             }
         });
+
+        // Перезапуск тесту
+        function restartQuiz() {
+            loadQuiz(); // Перезавантажуємо тест
+        }
+
+        // Завантаження тесту при ініціалізації
+        loadQuiz();
     </script>
 </body>
 </html>
