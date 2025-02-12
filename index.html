@@ -7,6 +7,7 @@
     <!-- Підключення Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Базові стилі для мобільних пристроїв (Mobile First) */
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             display: flex;
@@ -17,52 +18,44 @@
         }
         .container {
             background: white;
-            padding: 50px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 100%;
             max-width: 600px;
         }
         .question {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #333;
             padding: 20px;
             background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            text-align: justify;
             line-height: 1.5;
-            margin-top: 30px;
-            transition: transform 0.3s ease;
-        }
-        .question:hover {
-            transform: scale(1.02);
+            margin-top: 20px;
         }
         .btn-custom {
-            font-size: 18px;
-            padding: 20px;
+            font-size: 16px;
+            padding: 15px;
             width: 100%;
             margin: 10px 0;
-            transition: transform 0.2s, box-shadow 0.2s;
         }
         .btn-custom:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
         }
-        .btn-custom:focus {
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        }
         #next, #prev {
             margin-top: 20px;
-            padding: 12px 20px;
+            padding: 10px 15px;
             background-color: #28a745;
             color: white;
             border: none;
             border-radius: 5px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
         }
         #prev {
@@ -76,16 +69,15 @@
             margin-top: 20px;
         }
         .nav-button {
-            font-size: 18px;
-            width: 40px;
-            height: 40px;
+            font-size: 16px;
+            width: 35px;
+            height: 35px;
             margin: 5px;
             border-radius: 50%;
-            background-color: #6c757d; /* Сірий колір для ще не вирішених питань */
+            background-color: #6c757d; /* Сірий для ще не вирішених питань */
             color: white;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
         .nav-button:hover {
             background-color: #5a6268;
@@ -94,10 +86,41 @@
             background-color: #28a745;
         }
         .nav-button.correct {
-            background-color: #28a745; /* зелений для правильної відповіді */
+            background-color: #28a745;
         }
         .nav-button.incorrect {
-            background-color: #dc3545; /* червоний для неправильної відповіді */
+            background-color: #dc3545;
+        }
+
+        /* Медіа-запити для великих екранів */
+        @media (min-width: 768px) {
+            .container {
+                padding: 40px;
+            }
+            .question {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            .btn-custom {
+                font-size: 18px;
+                padding: 20px;
+            }
+            #next, #prev {
+                font-size: 18px;
+                padding: 12px 20px;
+            }
+            .nav-button {
+                font-size: 18px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* Медіа-запити для дуже великих екранів */
+        @media (min-width: 1200px) {
+            .container {
+                width: 70%;
+            }
         }
     </style>
 </head>
@@ -138,7 +161,6 @@
                 generateNavigation();
             });
 
-        // Показати поточне питання
         function showQuestion() {
             const questionData = questions[currentQuestionIndex];
             document.getElementById('question').innerText = questionData.question;
@@ -162,37 +184,27 @@
             updateNavigation();
         }
 
-        // Підсвітити правильну відповідь
         function selectAnswer(button, isCorrect, allAnswers) {
-            // Вимикаємо всі кнопки після вибору
             document.querySelectorAll('#answers button').forEach(btn => btn.disabled = true);
 
-            // Підсвітлюємо вибрану відповідь
             if (isCorrect) {
                 button.style.backgroundColor = 'green';
             } else {
                 button.style.backgroundColor = 'red';
             }
 
-            // Підсвічуємо правильну відповідь салатовим
             allAnswers.forEach(answer => {
                 if (answer.correct) {
                     const correctButton = Array.from(document.querySelectorAll('#answers button')).find(btn => btn.innerText === answer.text);
-                    correctButton.style.backgroundColor = 'lightgreen'; // салатовий колір
+                    correctButton.style.backgroundColor = 'lightgreen';
                 }
             });
 
-            // Оновлюємо навігаційну кнопку для поточного питання
             updateNavigationButton(isCorrect);
-
-            // Оновити статус питання
             questions[currentQuestionIndex].answered = true;
-
-            // Активуємо кнопку для переходу до наступного питання
             document.getElementById('next').disabled = false;
         }
 
-        // Оновлення навігаційної кнопки в залежності від правильності відповіді
         function updateNavigationButton(isCorrect) {
             const navButtons = document.querySelectorAll('.nav-button');
             const currentButton = navButtons[currentQuestionIndex];
@@ -200,7 +212,6 @@
             currentButton.classList.add(isCorrect ? 'correct' : 'incorrect');
         }
 
-        // Генерація навігаційних кнопок для питань
         function generateNavigation() {
             const navDiv = document.getElementById('quiz-nav');
             navDiv.innerHTML = '';
@@ -214,7 +225,6 @@
             });
         }
 
-        // Оновити активну навігаційну кнопку
         function updateNavigation() {
             const navButtons = document.querySelectorAll('.nav-button');
             navButtons.forEach((button, index) => {
@@ -223,22 +233,18 @@
                     button.classList.remove('correct', 'incorrect');
                 } else {
                     button.classList.remove('active');
-                    // Якщо питання не було вирішено, кнопка повинна бути сірою
                     if (!questions[index].answered) {
                         button.classList.remove('correct', 'incorrect');
-                        button.classList.add('gray');
                     }
                 }
             });
         }
 
-        // Перехід до конкретного питання за допомогою кнопки навігації
         function goToQuestion(index) {
             currentQuestionIndex = index;
             showQuestion();
         }
 
-        // Кнопка наступного питання
         document.getElementById('next').addEventListener('click', () => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
@@ -248,7 +254,6 @@
             }
         });
 
-        // Кнопка попереднього питання
         document.getElementById('prev').addEventListener('click', () => {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
