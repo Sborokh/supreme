@@ -222,35 +222,35 @@
             currentButton.classList.add(isCorrect ? 'correct' : 'incorrect');
         }
 
-        // Генерація кнопок для навігації
-        function generateNavigation() {
-            const navDiv = document.getElementById('quiz-nav');
-            navDiv.innerHTML = '';
+        // // Генерація кнопок для навігації
+        // function generateNavigation() {
+        //     const navDiv = document.getElementById('quiz-nav');
+        //     navDiv.innerHTML = '';
 
-            questions.forEach((_, index) => {
-                const navButton = document.createElement('button');
-                navButton.classList.add('nav-button');
-                navButton.innerText = index + 1;
-                navButton.onclick = () => goToQuestion(index);
-                navDiv.appendChild(navButton);
-            });
-        }
+        //     questions.forEach((_, index) => {
+        //         const navButton = document.createElement('button');
+        //         navButton.classList.add('nav-button');
+        //         navButton.innerText = index + 1;
+        //         navButton.onclick = () => goToQuestion(index);
+        //         navDiv.appendChild(navButton);
+        //     });
+        // }
 
-        // Оновлення стану кнопок навігації
-        function updateNavigation() {
-            const navButtons = document.querySelectorAll('.nav-button');
-            navButtons.forEach((button, index) => {
-                if (index === currentQuestionIndex) {
-                    button.classList.add('active');
-                    button.classList.remove('correct', 'incorrect');
-                } else {
-                    button.classList.remove('active');
-                    if (!questions[index].answered) {
-                        button.classList.remove('correct', 'incorrect');
-                    }
-                }
-            });
-        }
+        // // Оновлення стану кнопок навігації
+        // function updateNavigation() {
+        //     const navButtons = document.querySelectorAll('.nav-button');
+        //     navButtons.forEach((button, index) => {
+        //         if (index === currentQuestionIndex) {
+        //             button.classList.add('active');
+        //             button.classList.remove('correct', 'incorrect');
+        //         } else {
+        //             button.classList.remove('active');
+        //             if (!questions[index].answered) {
+        //                 button.classList.remove('correct', 'incorrect');
+        //             }
+        //         }
+        //     });
+        // }
 
         // Перехід до питання
         function goToQuestion(index) {
